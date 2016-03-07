@@ -2,7 +2,11 @@ var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
 var router = express.Router();
-var User = require("./db/User");
+var User = require("./model/User");
+var mongoose = require("mongoose");
+var config = require("./config");
+
+mongoose.connect(config.database);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({"extended" : true}));
