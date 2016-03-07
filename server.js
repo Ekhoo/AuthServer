@@ -2,7 +2,7 @@ var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
 var router = express.Router();
-var mongoOp = require("./db/mongo");
+var User = require("./db/User");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({"extended" : true}));
@@ -13,13 +13,13 @@ router.get("/", function(req, res) {
 
 router.route("/user")
   .post(function(req, res) {
-      var db = new mongoOp();
+      var user = new User();
       var response = {};
 
-      db.email = req.body.email;
-      db.password = require("crypto").createHash("sha1").update(req.body.password).digest("base64")
+      user.email = req.body.email;
+      user.password = require("crypto").createHash("sha1").update(req.body.password).digest("base64")
 
-      db.save(function (err, data) {
+      user.save(function (err, data) {
           if (err) {
               response = {"error": true, "message": "Error adding user"}
           } else {
@@ -34,11 +34,11 @@ router.route("/user/:id")
     .get(function (req, res) {
         var response = {};
 
-        mongoOp.findById(req.params.id, function (err, data) {
+        User.findById(req.params.id, function (err, user) {
             if (err) {
                 response = {"error": true, "message": "Error getting user"}
             } else {
-                response = {"error": false, "message": data}
+                response = {"error": false, "message": user}
             }
 
             res.json(response);
@@ -47,19 +47,19 @@ router.route("/user/:id")
     .put(function (req, res) {
         var response = {};
 
-        mongoOp.findById(req.params.id, function(err, data) {
+        User.findById(req.params.id, function(err, user) {
             if (err) {
                 response = {"error": true, "message": "Error getting user"}
             } else {
               if (req.body.email !== undefined) {
-                  data.email = req.body.email;
+                  user.email = req.body.email;
               }
 
               if (req.body.password !== undefined) {
-                  data.password = require("crypto").createHash("sha1").update(req.body.password).digest("base64");
+                  user.password = require("crypto").createHash("sha1").update(req.body.password).digest("base64");
               }
 
-              data.save(function (err, data) {
+              user.save(function (err, data) {
                 if (err) {
                     response = {"error" : true,"message" : "Error updating data"};
                 } else {
@@ -74,11 +74,11 @@ router.route("/user/:id")
     .delete(function (req, res) {
         var response = {};
 
-        mongoOp.findById(req.params.id, function(err, data) {
+        User.findById(req.params.id, function(err, user) {
             if (err) {
                 response = {"error": true, "message": "Error getting user"}
             } else {
-              mongoOp.remove({_id: req.params.id}, function (err) {
+              user.remove(function (err) {
                 if (err) {
                   response = {"error" : true,"message" : "Error deleting data"};
                 } else {
@@ -91,7 +91,7 @@ router.route("/user/:id")
         });
     });
 
-app.use("/", router);
+app.use("/api", router);
 
 app.listen(3000);
 console.log("Server listen on port 3000");
