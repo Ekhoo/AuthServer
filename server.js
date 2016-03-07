@@ -4,12 +4,14 @@ var bodyParser = require("body-parser");
 var router = express.Router();
 var User = require("./model/User");
 var mongoose = require("mongoose");
-var config = require("./config");
+var config = require('./config');
+var morgan = require('morgan');
 
 mongoose.connect(config.database);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({"extended" : true}));
+app.use(morgan('dev'));
 
 router.get("/", function(req, res) {
   res.json({"error": false, "message": "Hello World"});
