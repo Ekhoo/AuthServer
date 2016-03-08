@@ -2,10 +2,14 @@ var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
 var router = express.Router();
-var User = require("./model/User");
+var User = require("./domain/model/User");
 var mongoose = require("mongoose");
 var config = require('./config');
 var morgan = require('morgan');
+var createUserAction = require('./application/createUserAction');
+var getUserAction = require('./application/getUserAction');
+var updateUserAction = require('./application/updateUserAction');
+var deleteUserAction = require('./application/deleteUserAction');
 
 mongoose.connect(config.database);
 
@@ -13,85 +17,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({"extended" : true}));
 app.use(morgan('dev'));
 
-router.route("/user")
-  .post(function(req, res) {
-      var user = new User();
-      var response = {};
-
-      user.email = req.body.email;
-      user.password = require("crypto").createHash("sha1").update(req.body.password).digest("base64")
-
-      user.save(function (err, data) {
-          if (err) {
-              response = {"error": true, "message": "Error adding user"}
-          } else {
-              response = {"error": false, "message" : data};
-          }
-
-          res.json(response);
-      });
-  });
-
+/*** User ***/
+router.route("/user").post(createUserAction);
 router.route("/user/:id")
-    .get(function (req, res) {
-        var response = {};
-
-        User.findById(req.params.id, function (err, user) {
-            if (err) {
-                response = {"error": true, "message": "Error getting user"}
-            } else {
-                response = {"error": false, "message": user}
-            }
-
-            res.json(response);
-        })
-    })
-    .put(function (req, res) {
-        var response = {};
-
-        User.findById(req.params.id, function(err, user) {
-            if (err) {
-                response = {"error": true, "message": "Error getting user"}
-            } else {
-              if (req.body.email !== undefined) {
-                  user.email = req.body.email;
-              }
-
-              if (req.body.password !== undefined) {
-                  user.password = require("crypto").createHash("sha1").update(req.body.password).digest("base64");
-              }
-
-              user.save(function (err, data) {
-                if (err) {
-                    response = {"error" : true,"message" : "Error updating data"};
-                } else {
-                    response = {"error" : false,"message" : data};
-                }
-
-                res.json(response);
-              });
-            }
-        });
-    })
-    .delete(function (req, res) {
-        var response = {};
-
-        User.findById(req.params.id, function(err, user) {
-            if (err) {
-                response = {"error": true, "message": "Error getting user"}
-            } else {
-              user.remove(function (err) {
-                if (err) {
-                  response = {"error" : true,"message" : "Error deleting data"};
-                } else {
-                  response = {"error" : true,"message" : "Data associated with "+req.params.id+"is deleted"};
-                }
-
-                res.json(response);
-              });
-            }
-        });
-    });
+    .get(getUserAction)
+    .put(updateUserAction)
+    .delete(deleteUserAction);
 
 app.use("/api", router);
 
