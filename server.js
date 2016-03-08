@@ -13,12 +13,13 @@ var deleteUserAction = require('./application/deleteUserAction');
 
 mongoose.connect(config.database);
 
+app.set('superSecret', config.secret);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({"extended" : true}));
 app.use(morgan('dev'));
 
 /*** User ***/
-router.route("/user").post(createUserAction);
+router.route("/user/register").post(createUserAction);
 router.route("/user/:id")
     .get(getUserAction)
     .put(updateUserAction)
@@ -26,5 +27,6 @@ router.route("/user/:id")
 
 app.use("/api", router);
 
-app.listen(config.port);
-console.log("Server listen on port " + config.port);
+var port = process.env.PORT || config.port;
+app.listen(port);
+console.log("Server listen on port " + port);
