@@ -13,7 +13,6 @@ var deleteUserAction = require('./application/deleteUserAction');
 
 mongoose.connect(config.database);
 
-app.set('superSecret', config.secret);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({"extended" : true}));
 app.use(morgan('dev'));
