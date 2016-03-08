@@ -6,7 +6,7 @@ var updateUserAction = function updateUserAction(request, response) {
 
     User.findById(request.params.id, function(error, user) {
         if (error) {
-            payload = {"error": true, "message": "Error getting user"}
+            payload = {"error": true, "message": "Error getting user"};
         } else {
             if (request.body.email !== undefined) {
                 user.email = request.body.email;

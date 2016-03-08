@@ -6,7 +6,7 @@ var createUserAction = function createUserAction(request, response) {
     var payload = {};
 
     user.email = request.body.email;
-    user.password = crypto.createHash("sha1").update(request.body.password).digest("base64")
+    user.password = crypto.createHash("sha1").update(request.body.password).digest("base64");
 
     user.save(function (error, data) {
         if (error) {

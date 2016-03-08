@@ -5,7 +5,7 @@ var deleteUserAction = function deleteUserAction(request, response) {
 
     User.findById(request.params.id, function(error, user) {
         if (error) {
-            payload = {"error": true, "message": "Error getting user"}
+            payload = {"error": true, "message": "Error getting user"};
         } else {
             user.remove(function (error) {
                 if (error) {
