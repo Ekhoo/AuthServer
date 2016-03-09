@@ -5,9 +5,13 @@ var getUserAction = function getUserAction(request, response) {
 
     User.findById(request.params.id, function (error, user) {
         if (error) {
-            payload = {"error": true, "message": "Error getting user"};
+            payload = {
+                message: "Error getting user"
+            };
         } else {
-            payload = {"error": false, "message": user};
+            payload = {
+                message: user
+            };
         }
 
         response.json(payload);

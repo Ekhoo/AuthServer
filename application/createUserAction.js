@@ -19,7 +19,7 @@ var createUserAction = function createUserAction(request, response) {
             newUser.email = request.body.email;
             newUser.password = crypto.createHash("sha1").update(request.body.password).digest("base64");
             newUser.token = jwt.sign(newUser, config.secret, {
-                expiresIn: 86400 // Expires in 24 hours
+                expiresIn: config.tokenDuration / 1000 // 24 hours (seconds)
             });
 
             newUser.save(function (error, data) {

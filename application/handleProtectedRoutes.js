@@ -10,7 +10,7 @@ var handleProtectedRoutes = function handleProtectedRoutes(request, response, ne
             if (error) {
                 response.status(401);
                 response.json({
-                    message: 'Token validation failed'
+                    message: error.message
                 });
             } else {
                 request.decoded = decoded;
@@ -19,7 +19,7 @@ var handleProtectedRoutes = function handleProtectedRoutes(request, response, ne
                     if (error || !user) {
                         response.status(401);
                         response.json({
-                            message: 'Cannot associate token with user.'
+                            message: 'Cannot find user with this token.'
                         });
                     } else {
                         next();
