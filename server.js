@@ -26,19 +26,28 @@ router.use(function (request, response, next) {
     if (token) {
         jwt.verify(token, config.secret, function (error, decoded) {
             if (error) {
+                response.status(401);
                 response.json({
-                    error: true,
                     message: 'Token validation failed'
                 });
             } else {
                 request.decoded = decoded;
-                next();
+
+                User.findOne({token: token}, function (error, user) {
+                    if (error || !user) {
+                        response.status(401);
+                        response.json({
+                            message: 'Cannot associate token with user.'
+                        });
+                    } else {
+                        next();
+                    }
+                });
             }
         });
     } else {
-        response.status(403);
+        response.status(401);
         response.json({
-            error: true,
             message: 'No token provided.'
         });
     }
